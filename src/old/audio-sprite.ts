@@ -12,9 +12,9 @@ export type AudioSpriteClip = {
 
 /**
  * Defines a map where the key is the sound name and value is an AudioSpriteInfo
- * e.g. { "c": { clip: "guitar4", offset: "0s", duration: "4s" }, "c#": { clip: "guitar4", offset: "4s", duration: "4s" } }
+ * e.g. { "c": { clip: offset: 0, duration: 4000 }, "c#": { offset: 4000, duration: 4000 } }
  */
-export type AudioSpriteMap = {
+export type AudioSpriteClipMap = {
     [key: string]: AudioSpriteClip
 };
 

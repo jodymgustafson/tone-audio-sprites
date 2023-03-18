@@ -1,5 +1,5 @@
 /**
- * An audio lib is a collection of audio clips that are loaded together
+ * An audio lib is a collection of audio files that are loaded together
  * and can be played individually
  */
 export interface AudioLib {
@@ -8,7 +8,7 @@ export interface AudioLib {
      * @param fileNames Array of file names
      * @param progress A callback that reports the loading percent complete 
      */
-    load(fileNames: string[], onLoaded?: () => any, progress?: (pct: number) => any): Promise<void>;
+    load(fileNames: string[], progress?: (pct: number) => any): Promise<void>;
     
     /**
      * Starts playback of one or more audio clips

@@ -18,8 +18,8 @@ export abstract class WebAudioLib implements AudioLib {
         return new Promise<void>((resolve, reject) => {
             fileNames.forEach(n => this.loadFile(n)
                 .then(() => {
-                    progress(loadCount / count);
-                    if (++loadCount === count) {
+                    progress(++loadCount / count);
+                    if (loadCount === count) {
                         resolve();
                     }
                 })

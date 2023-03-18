@@ -1,4 +1,4 @@
-import { AudioLib } from "./audio-lib";
+import { AudioLib } from "./old/audio-lib";
 import { ToneAudioLib } from "./tone-audio-lib";
 import * as Tone from "tone";
 import * as analog from "analogging";
