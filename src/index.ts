@@ -1,35 +1,36 @@
-import { GuitarAudioLib } from "./audio-sprites/guitar-audio-lib";
-import { PianoAudioLib } from "./audio-sprites/piano-audio-lib";
 import * as Tone from "tone";
+import { AudioInstrument } from "./audio/audio-instrument";
+import { PianoInstrument } from "./audio/tone/instruments/piano-instrument";
+import { GuitarInstrument } from "./audio/tone/instruments/guitar-instrument";
 
-let guitar: GuitarAudioLib;
-let piano: PianoAudioLib;
+const AUDIO_EXTENSIONS = ["ogg", "mp3"];
+const AUDIO_PATH = "/audio";
+
+let guitar: AudioInstrument;
+let piano: AudioInstrument;
 let instrSelect: HTMLSelectElement;
-let noteSelect: HTMLSelectElement;
 let octaveSelect: HTMLSelectElement;
-let playBtn: HTMLButtonElement;
-let stopBtn: HTMLButtonElement;
 let progress: HTMLSpanElement;
 let keyboard: HTMLDivElement;
+let sustain: HTMLInputElement;
+let chords: HTMLInputElement;
 
 export function start(): void {
     console.log("Starting");
     instrSelect = document.getElementById("instrument") as HTMLSelectElement;
     octaveSelect = document.getElementById("octave") as HTMLSelectElement;
-    noteSelect = document.getElementById("note") as HTMLSelectElement;
-    playBtn = document.getElementById("play") as HTMLButtonElement;
-    stopBtn = document.getElementById("stop") as HTMLButtonElement;
+    sustain = document.getElementById("sustain") as HTMLInputElement;
+    chords = document.getElementById("chords") as HTMLInputElement;
     progress = document.getElementById("progress") as HTMLSpanElement;
     keyboard = document.getElementById("keyboard") as HTMLDivElement;
 
-    playBtn.addEventListener("click", playSelectedNote);
-    stopBtn.addEventListener("click", stopSelectedNote);
-    keyboard.addEventListener("click", playKeyboardNote);
+    keyboard.addEventListener("mousedown", playNote);
+    keyboard.addEventListener("mouseup", stopNote);
 }
 
-function playKeyboardNote(e: MouseEvent): void {
-    if ((e.target as HTMLElement).tagName === "BUTTON"){
-        const note = (e.target as HTMLButtonElement).innerText + octaveSelect.value;
+function playNote(e: MouseEvent): void {
+    const note = getKeyboardNote(e);
+    if (note) {
         if (instrSelect.value === "guitar") {
             playGuitar(note);
         }
@@ -39,56 +40,77 @@ function playKeyboardNote(e: MouseEvent): void {
     }
 }
 
-function playSelectedNote(): void {
-    const note = `${noteSelect.value}${octaveSelect.value}`;
-    if (instrSelect.value === "guitar") {
-        playGuitar(note);
-    }
-    else {
-        playPiano(note);
+function stopNote(e: MouseEvent): void {
+    if (sustain.checked) return;
+
+    const note = getKeyboardNote(e);
+    if (note) {
+        if (instrSelect.value === "guitar") {
+            stopInstrument(guitar, note);
+        }
+        else {
+            stopInstrument(piano, note);
+        }    
     }
 }
 
-function stopSelectedNote(): void {
-    const note = `${noteSelect.value}${octaveSelect.value}`;
-    if (instrSelect.value === "guitar") {
-        guitar?.stop(note);
+function getKeyboardNote(e: MouseEvent): string | undefined {
+    if ((e.target as HTMLElement).tagName === "BUTTON"){
+        return (e.target as HTMLButtonElement).innerText + octaveSelect.value;
     }
-    else {
-        piano?.stop(note);
-    }
+    return undefined;
 }
 
-function playGuitar(clip: string): void {
+function playGuitar(note: string): void {
     if (!guitar) {
-        console.log("Loading");
-        guitar = new GuitarAudioLib("/audio/", ["ogg", "mp3"]);
-        guitar.load(onProgressUpdated)
-            .then(() => {
-                progress.innerText = "100%";
-                console.log("Finished loading");
-                Tone.start().then(() => playGuitar(clip));
-            });
+        loadGuitar().then(() => playGuitar(note));
     }
     else {
-        guitar.play(clip);
+        playInstrument(guitar, note);
     }
 }
 
-function playPiano(clip: string): void {
+function playPiano(note: string): void {
     if (!piano) {
-        console.log("Loading");
-        piano = new PianoAudioLib("/audio/", ["ogg", "mp3"]);
-        piano.load(onProgressUpdated)
-            .then(() => {
-                progress.innerText = "100%";
-                console.log("Finished loading");
-                Tone.start().then(() => playPiano(clip));
-            });
+        loadPiano().then(() => playPiano(note));
     }
     else {    
-        piano.play(clip);
+        playInstrument(piano, note);
     }
+}
+
+function playInstrument(instrument: AudioInstrument, note: string): void {
+    if (chords.checked)
+        instrument.play(getChord(note), 20);
+    else
+        instrument.play(note);
+}
+
+function stopInstrument(instrument: AudioInstrument, note: string): void {
+    if (chords.checked)
+        instrument.stop(getChord(note));
+    else
+        instrument.stop(note);
+}
+
+function loadGuitar(): Promise<void> {
+    console.log("Loading guitar");
+    guitar = new GuitarInstrument(AUDIO_PATH, AUDIO_EXTENSIONS);
+    return guitar.load(onProgressUpdated)
+        .then(() => {
+            console.log("Finished loading");
+            return Tone.start();
+        });
+}
+
+function loadPiano(): Promise<void> {
+    console.log("Loading piano");
+    piano = new PianoInstrument(AUDIO_PATH, AUDIO_EXTENSIONS);
+    return piano.load(onProgressUpdated)
+        .then(() => {
+            console.log("Finished loading");
+            return Tone.start();
+        });
 }
 
 function onProgressUpdated(pct: number): void {
@@ -96,3 +118,27 @@ function onProgressUpdated(pct: number): void {
 }
 
 addEventListener('DOMContentLoaded', start);
+
+function getChord(note: string): string[] {
+    const re = note.split(/([A-G]{1}[#b]?)(\d)/);
+    return getChordNotes(re[1]).map(n => n + re[2]);
+}
+
+function getChordNotes(root: any): string[] {
+    switch (root) {
+        case "C": return ["C", "E", "G"];
+        case "C#": return ["C#", "F", "Ab"];
+        case "D": return ["D", "F#", "A"];
+        case "Eb": return ["Eb", "D", "A#"];
+        case "E": return ["E", "Gb", "B"];
+        case "F": return ["F", "A", "C"];
+        case "F#": return ["F#", "A#", "C#"];
+        case "G": return ["G", "B", "D"];
+        case "Ab": return ["Ab", "C", "Eb"];
+        case "A": return ["A", "C#", "E"];
+        case "Bb": return ["Bb", "D", "F"];
+        case "B": return ["B", "Eb", "F#"];
+        default: return [];
+    }
+}
+

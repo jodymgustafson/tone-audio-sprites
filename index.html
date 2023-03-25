@@ -2,9 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>Tone Audio Sprites</title>
   </head>
   <body>
     <div>
@@ -19,35 +18,21 @@
             <option>4</option>
             <option>5</option>
         </select>
-        <select id="note">
-            <option>C</option>
-            <option>C#</option>
-            <option>D</option>
-            <option>D#</option>
-            <option>E</option>
-            <option>F</option>
-            <option>F#</option>
-            <option>G</option>
-            <option>G#</option>
-            <option>A</option>
-            <option>A#</option>
-            <option>B</option>
-        </select>
-        <button id="play">Play</button>
-        <button id="stop">Stop</button>
+        <label><input type="checkbox" id="chords">Chords</label>
+        <label><input type="checkbox" id="sustain" checked>Sustain</label>
     </div>
     <div id="keyboard">
         <button>C</button>
         <button>C#</button>
         <button>D</button>
-        <button>D#</button>
+        <button>Eb</button>
         <button>E</button>
         <button>F</button>
         <button>F#</button>
         <button>G</button>
-        <button>G#</button>
+        <button>Ab</button>
         <button>A</button>
-        <button>A#</button>
+        <button>Bb</button>
         <button>B</button>
     </div>
     <script type="module" src="/src/index.ts"></script>

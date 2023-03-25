@@ -1,0 +1,1 @@
+This demonstrates how to define and use a library of audio sprites using the Tone.js module.

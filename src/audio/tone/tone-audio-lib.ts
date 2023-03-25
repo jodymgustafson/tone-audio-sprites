@@ -1,15 +1,16 @@
-import { WebAudioLib } from "./web-audio-lib";
+import { WebAudioLib } from "../web-audio-lib";
 import * as Tone from "tone";
 import * as analog from "analogging";
+import { AudioSample } from "../audio-lib";
 
 /**
- * A web audio lib that uses the Tone module
+ * A web audio lib that uses the Tone module to load and play samples
  */
 export class ToneAudioLib extends WebAudioLib {
     protected readonly logger = analog.getLogger("ToneAudioLib");
 
     /** Maps clip names to players */
-    protected readonly players: Record<string, Tone.Player> = {};
+    protected players: Record<string, Tone.Player> = {};
     protected readonly extensionString;
 
     /**
@@ -31,37 +32,41 @@ export class ToneAudioLib extends WebAudioLib {
     }
 
     protected getFileUrl(fileName: string) {
-        return this.path + encodeURIComponent(fileName) + this.extensionString;
+        return this.path + "/" + encodeURIComponent(fileName) + this.extensionString;
+    }
+
+    getSample(name: string): AudioSample | undefined {
+        return this.players[name];
     }
 
     protected getPlayer(name: string): Tone.Player | undefined {
         return this.players[name];
     }
 
-    play(...names: string[]): ToneAudioLib {
+    play(name: string): ToneAudioLib {
+        if (!this.loaded) return this;
+
         Tone.start().then(() => {
-            names.forEach(n => {
-                this.logger.debug("Playing", n);
-                const player = this.getPlayer(n);
-                if (player)
-                    player.start();
-                else
-                    throw new Error("Player not defined: " + n);
-            });
+            this.logger.debug("Playing", name);
+            const player = this.getPlayer(name);
+            if (player)
+                player.start();
+            else
+                throw new Error("Player not defined: " + name);
         });
 
         return this;
     }
 
-    stop(...names: string[]): ToneAudioLib {
-        names.forEach(n => {
-            this.logger.debug("Stopping", n);
-            const player = this.getPlayer(n);
-            if (player)
-                player.stop();
-            else
-                throw new Error("Player not defined: " + n);
-        });
+    stop(name: string): ToneAudioLib {
+        if (!this.loaded) return this;
+
+        this.logger.debug("Stopping", name);
+        const player = this.getPlayer(name);
+        if (player)
+            player.stop();
+        else
+            throw new Error("Player not defined: " + name);
 
         return this;
     }

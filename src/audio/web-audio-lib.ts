@@ -1,9 +1,11 @@
-import { AudioLib } from "./audio-lib";
+import { AudioLib, AudioSample } from "./audio-lib";
 
 /**
- * An audio lib for Web Audio
+ * A base class for Web Audio audio libs
  */
 export abstract class WebAudioLib implements AudioLib {
+    loaded = false;
+
     /**
      * @param extensions Supported audio file extensions in order of preference, e.g. ["ogg", "mp3"]
      */
@@ -14,12 +16,14 @@ export abstract class WebAudioLib implements AudioLib {
     load(fileNames: string[], progress: ((pct: number) => any) = () => undefined): Promise<void> {
         const count = fileNames.length;
         let loadCount = 0;
+        this.loaded = false;
 
         return new Promise<void>((resolve, reject) => {
             fileNames.forEach(n => this.loadFile(n)
                 .then(() => {
                     progress(++loadCount / count);
                     if (loadCount === count) {
+                        this.loaded = true;
                         resolve();
                     }
                 })
@@ -37,8 +41,11 @@ export abstract class WebAudioLib implements AudioLib {
     protected abstract loadFile(fileName: string): Promise<void>;
 
     /** See interface */
-    abstract play(...names: string[]): AudioLib;
+    abstract play(name: string): AudioLib;
 
     /** See interface */
-    abstract stop(...names: string[]): AudioLib;
+    abstract stop(name: string): AudioLib;
+
+    /** See interface */
+    abstract getSample(name: string): AudioSample | undefined;
 }
