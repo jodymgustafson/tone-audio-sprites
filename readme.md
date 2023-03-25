@@ -5,7 +5,7 @@ This demonstrates how to define and use a library of audio sprites using the [To
 ## Test App
 The test app is a single page app that uses the audio modules to demonstrate playing notes and chords.
 
-It uses Vite to run it locally. There's no need to build. To start use:
+It uses [Vite](https://vitejs.dev/) to run locally. There's no need to build. To start use:
 
     npm run dev
 
