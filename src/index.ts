@@ -6,6 +6,21 @@ import { GuitarInstrument } from "./audio/tone/instruments/guitar-instrument";
 const AUDIO_EXTENSIONS = ["ogg", "mp3"];
 const AUDIO_PATH = "/audio";
 
+const MAJOR_CHORDS: Record<string, string[]> = {
+    "C": ["C", "E", "G"],
+    "C#": ["C#", "F", "Ab"],
+    "D": ["D", "F#", "A"],
+    "Eb": ["Eb", "D", "A#"],
+    "E": ["E", "Ab", "B"],
+    "F": ["F", "A", "C"],
+    "F#": ["F#", "A#", "C#"],
+    "G": ["G", "B", "D"],
+    "Ab": ["Ab", "C", "Eb"],
+    "A": ["A", "C#", "E"],
+    "Bb": ["Bb", "D", "F"],
+    "B": ["B", "Eb", "F#"],
+}
+
 let guitar: AudioInstrument;
 let piano: AudioInstrument;
 let instrSelect: HTMLSelectElement;
@@ -125,20 +140,6 @@ function getChord(note: string): string[] {
 }
 
 function getChordNotes(root: any): string[] {
-    switch (root) {
-        case "C": return ["C", "E", "G"];
-        case "C#": return ["C#", "F", "Ab"];
-        case "D": return ["D", "F#", "A"];
-        case "Eb": return ["Eb", "D", "A#"];
-        case "E": return ["E", "Ab", "B"];
-        case "F": return ["F", "A", "C"];
-        case "F#": return ["F#", "A#", "C#"];
-        case "G": return ["G", "B", "D"];
-        case "Ab": return ["Ab", "C", "Eb"];
-        case "A": return ["A", "C#", "E"];
-        case "Bb": return ["Bb", "D", "F"];
-        case "B": return ["B", "Eb", "F#"];
-        default: return [];
-    }
+    return MAJOR_CHORDS[root];
 }
 
