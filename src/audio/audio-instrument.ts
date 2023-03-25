@@ -1,18 +1,17 @@
-export const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+export const NOTE_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
 const NOTE_ALIASES: Record<string, string> = {
     "Db": "C#",
-    "Eb": "D#",
-    "Fb": "E",
+    "D#": "Eb",
     "Gb": "F#",
-    "Ab": "G#",
-    "Bb": "A#",
-    "Cb": "B",
-    "E#": "F",
-    "B#": "C",
-}
+    "G#": "Ab",
+    "A#": "Bb",
+};
 
 /** Defines an instrument that can play multiple notes */
 export interface AudioInstrument {
+    /** Returns true if the audio has been loaded */
+    isLoaded: boolean;
+
     /**
      * Loads the audio for the instrument
      */

@@ -4,6 +4,8 @@ import { AudioInstrument, normalizeNoteName, NOTE_NAMES } from "../../audio-inst
 export abstract class BaseInstrument implements AudioInstrument {
     protected readonly lib: ToneSampleSpriteLib;
 
+    get isLoaded()  { return this.lib.isLoaded; }
+
     constructor(readonly path: string, readonly extensions: string[], spriteInfo: SampleSpriteInfo[]) {
         this.lib = new ToneSampleSpriteLib(this.path, this.extensions, spriteInfo);
     }
@@ -33,14 +35,23 @@ export abstract class BaseInstrument implements AudioInstrument {
     }
 }
 
-export function getSpriteInfo(name: string, minOctave: number, maxOctave: number, duration = 2, spacing = 4): SampleSpriteInfo[] {
+/**
+ * Builds an array of SampleSpriteInfo
+ * @param name Base name of the audio file 
+ * @param minOctave Lowest octave
+ * @param maxOctave Highest octave
+ * @param startOffset Offset in seconds from the beginning of the sample where sprites start
+ * @param duration Length of the sprite in seconds
+ * @param spacing How far apart in seconds each sprite is
+ */
+export function getSpriteInfo(name: string, minOctave: number, maxOctave: number, startOffset = 1, duration = 2, spacing = 4): SampleSpriteInfo[] {
     const info: SampleSpriteInfo[] = [];
-    for (let octave = minOctave; octave < maxOctave; octave++) {
+    for (let octave = minOctave; octave <= maxOctave; octave++) {
         for (let n = 0; n < NOTE_NAMES.length; n++) {
             info.push({
                 id: NOTE_NAMES[n] + octave,
                 fileName: name + octave,
-                offset: (n * spacing) + 1,
+                offset: (n * spacing) + startOffset,
                 duration: duration
             });
         }

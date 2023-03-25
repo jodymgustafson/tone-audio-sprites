@@ -5,8 +5,8 @@ const audioFiles = [
 ];
 
 export class PianoInstrument extends BaseInstrument {
-    constructor(readonly path: string, readonly extensions: string[]) {
-        super(path, extensions, getSpriteInfo("piano", 4, 6))
+    constructor(path: string, extensions: string[]) {
+        super(path, extensions, getSpriteInfo("piano", 4, 5))
     }
 
     load(progress?: (pct: number) => any): Promise<void> {

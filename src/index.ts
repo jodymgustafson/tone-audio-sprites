@@ -66,7 +66,7 @@ function playGuitar(note: string): void {
         loadGuitar().then(() => playGuitar(note));
     }
     else {
-        playInstrument(guitar, note);
+        playInstrument(guitar, note, 20);
     }
 }
 
@@ -75,13 +75,13 @@ function playPiano(note: string): void {
         loadPiano().then(() => playPiano(note));
     }
     else {    
-        playInstrument(piano, note);
+        playInstrument(piano, note, 10);
     }
 }
 
-function playInstrument(instrument: AudioInstrument, note: string): void {
+function playInstrument(instrument: AudioInstrument, note: string, strumDelay: number): void {
     if (chords.checked)
-        instrument.play(getChord(note), 20);
+        instrument.play(getChord(note), strumDelay);
     else
         instrument.play(note);
 }
@@ -130,7 +130,7 @@ function getChordNotes(root: any): string[] {
         case "C#": return ["C#", "F", "Ab"];
         case "D": return ["D", "F#", "A"];
         case "Eb": return ["Eb", "D", "A#"];
-        case "E": return ["E", "Gb", "B"];
+        case "E": return ["E", "Ab", "B"];
         case "F": return ["F", "A", "C"];
         case "F#": return ["F#", "A#", "C#"];
         case "G": return ["G", "B", "D"];

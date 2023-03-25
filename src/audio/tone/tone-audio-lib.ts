@@ -44,7 +44,8 @@ export class ToneAudioLib extends WebAudioLib {
     }
 
     play(name: string): ToneAudioLib {
-        if (!this.loaded) return this;
+        if (!this.isLoaded)
+            throw new Error("You must call load before playing");
 
         Tone.start().then(() => {
             this.logger.debug("Playing", name);
@@ -59,7 +60,7 @@ export class ToneAudioLib extends WebAudioLib {
     }
 
     stop(name: string): ToneAudioLib {
-        if (!this.loaded) return this;
+        if (!this.isLoaded) return this;
 
         this.logger.debug("Stopping", name);
         const player = this.getPlayer(name);
